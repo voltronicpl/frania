@@ -16,8 +16,10 @@ Ręcznie: wrzuć `dist/lg-thinq-washer-card.js` do `/config/www/` i dodaj zasób
 
 ## Minimalna konfiguracja
 
+> Typ karty to `custom:lg-thinq-washer-panel-card` (inna nazwa niż w paczce *HomeAssistantLGThinkQCards*, żeby się nie gryzły).
+
 ```yaml
-type: custom:lg-thinq-washer-card
+type: custom:lg-thinq-washer-panel-card
 prefix: frania
 name: Pralka Frania
 ```
@@ -49,7 +51,7 @@ Oficjalna integracja `lg_thinq` **nie wystawia** aktualnego programu, temperatur
 jeśli podasz encję z programem:
 
 ```yaml
-type: custom:lg-thinq-washer-card
+type: custom:lg-thinq-washer-panel-card
 prefix: frania
 name: Pralka Frania
 entities:
