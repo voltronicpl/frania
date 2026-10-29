@@ -1,0 +1,6 @@
+{
+  "name": "LG ThinQ Washer Card",
+  "filename": "lg-thinq-washer-card.js",
+  "render_readme": true,
+  "homeassistant": "2024.8.0"
+}
