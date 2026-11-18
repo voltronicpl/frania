@@ -17,6 +17,7 @@ Ręcznie: wrzuć `dist/lg-thinq-washer-card.js` do `/config/www/` i dodaj zasób
 ## Minimalna konfiguracja
 
 > Typ karty to `custom:lg-thinq-washer-panel-card` (inna nazwa niż w paczce *HomeAssistantLGThinkQCards*, żeby się nie gryzły).
+> Od v1.2.1 działa też krótki alias `custom:frania-card`.
 
 ```yaml
 type: custom:lg-thinq-washer-panel-card
@@ -100,6 +101,59 @@ input_select:
 - Start zdalny działa tylko gdy `binary_sensor.<prefix>_remote_start` = `on` (włącza się na pralce przyciskiem Remote Start).
 - Kliknięcie kafelków otwiera okno szczegółów danej encji.
 - Karta jest responsywna (container queries) — działa w sekcjach, kolumnach i na telefonie.
+
+## Rozwiązywanie problemów (v1.2.1)
+
+### „Błąd konfiguracji” zamiast kafelka
+
+Od v1.2.1 karta nie zgłasza błędu do HA. Przy złej konfiguracji kafelek pokazuje komunikat w środku:
+
+- **„Nie znaleziono pralki LG ThinQ”** — brak `prefix` i `entities`, a karta nie znalazła pralki sama
+  (szuka `select.<prefix>_operation` z opcją `wake_up`). Wpisz `prefix:`, np. `frania` dla `sensor.frania_current_status`.
+- **„Brak encji sensor.…_current_status”** — `prefix` nie pasuje do encji. Sprawdź nazwę w Ustawienia → Urządzenia oraz usługi → Encje
+  albo podaj `entities:` → `status:`.
+- **„Błąd karty: …”** — wyjątek w karcie. Szczegóły w konsoli przeglądarki (F12). Zgłoś go w Issues.
+
+Zła wartość opcji (np. `entities` nie jest słownikiem, `programs` nie jest listą) jest pomijana — karta bierze wartość domyślną.
+
+Jeśli „Błąd konfiguracji” dalej się pokazuje, kafelek obsługuje inna karta niż ta (patrz niżej).
+
+### Kilka zasobów z tą samą kartą
+
+Na liście Ustawienia → Pulpity → Zasoby (menu ⋮) ma być **jeden** wpis tej karty:
+`/hacsfiles/frania/lg-thinq-washer-card.js` (typ: moduł JavaScript). Usuń pozostałe, np. starą ręczną kopię
+`/local/lg-thinq-washer-card.js`. Potem odśwież przeglądarkę (Ctrl+F5).
+
+Gdy karta załaduje się drugi raz, w konsoli pojawia się ostrzeżenie z oboma adresami i podpowiedzią, który zasób usunąć,
+a na górze kafelka — mały pomarańczowy napis. Karta dalej działa.
+
+Zasób musi mieć typ **moduł JavaScript** (HACS ustawia go sam). Jako zwykły „JavaScript” karta się nie załaduje.
+
+Zasób `/hacsfiles/lg-thinq-washer-card/lg-thinq-washer-card.js` to **inna** paczka (*HomeAssistantLGThinkQCards*).
+Zostaw go tylko wtedy, gdy używasz jej kart.
+
+### Zmiana typu w v1.2.0
+
+Do v1.1.0 typ karty to `custom:lg-thinq-washer-card`. Tej samej nazwy używa obca paczka *HomeAssistantLGThinkQCards*,
+więc od v1.2.0 typ to `custom:lg-thinq-washer-panel-card`. Stary YAML trafia do obcej karty albo do starej kopii z `/local/`
+i kończy się „Błędem konfiguracji”. Zmień w YAML kafelka:
+
+```yaml
+type: custom:lg-thinq-washer-panel-card   # albo krótko: custom:frania-card
+```
+
+**Stara nazwa:** karta rejestruje alias `lg-thinq-washer-card` co najmniej 5 s po załadowaniu strony i tylko wtedy,
+gdy nikt jej nie zajął i na stronie nie ma zasobu obcej paczki (`/hacsfiles/lg-thinq-washer-card/`).
+Gdy obca paczka jest zainstalowana, nazwa zostaje przy niej, a stary YAML pokaże jej kartę.
+Gdy nazwę zajmuje stara kopia tej karty (do v1.1.0, np. `/local/lg-thinq-washer-card.js`), karta pokazuje ostrzeżenie
+w konsoli i na kafelku z podpowiedzią, by usunąć ten zasób.
+Ryzyko: obca paczka dodana spoza HACS (inny adres niż `/hacsfiles/lg-thinq-washer-card/`) i ładowana później niż 5 s
+po stronie straci nazwę, a jej kafelki przestaną działać. Dlatego zalecane jest przejście na nowy typ.
+
+### Alias `frania-card`
+
+`custom:frania-card` to ta sama karta pod krótką nazwą, z tymi samymi opcjami. Na liście „Dodaj kartę” widać tylko
+*LG ThinQ Washer Panel Card*.
 
 ## Licencja
 
